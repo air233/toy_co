@@ -4,6 +4,8 @@
 #define RET 9
 #define RSP 13
 
+#include <vector>
+
 struct coContex
 {
     void* regs[14];
@@ -33,25 +35,48 @@ extern "C"
 
 typedef void *(*pfCoWorkFunction)(void* arg);
 
+struct coCoroutine;
+
+class coCoroutineEvn
+{
+private:
+
+    //协程栈列表
+    std::vector<coCoroutine*> m_gloablCo;
+    char m_init = false;
+
+public:
+    coCoroutineEvn() = default;
+    ~coCoroutineEvn() = default;
+
+    bool Init();
+    bool IsInit();
+
+    coCoroutine* GetCurCo();
+    coCoroutine* GetLastCo();
+    void PushCo(coCoroutine* co);
+    void PopCurCo();
+};
 
 struct coCoroutine
 {
-    coContex coCtx;
-    pfCoWorkFunction func;
-    void* arg;
-    void* stack_buff;
-    int stack_size;
+    coCoroutineEvn* m_evn;
 
-    char ctxStart;
+    coContex m_coCtx;
+    pfCoWorkFunction m_func;
+    void* m_arg;
+    void* m_stack_buff;
+    int m_stack_size;
+    char m_ctxStart;
 
-    char coname[64];
+    char m_coname[64];
 };
 
-int co_create(coCoroutine** pCo,void *(*routine)(void*),void *arg);
+//=============================API===================================
+coCoroutineEvn* co_get_evn();
+ int co_create(coCoroutine** pCo, void *(*routine)(void*), void *arg);
 void co_resume(coCoroutine* co);
-void co_yield();
 void co_yield(coCoroutine* co);
+void co_yield();
 void co_release(coCoroutine* co);
 void co_loop();
-
-void _co_swap(coCoroutine* coCur,coCoroutine* coLast);

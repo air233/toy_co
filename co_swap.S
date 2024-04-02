@@ -2,7 +2,7 @@
 .type  co_swap, @function
 co_swap:
     leaq (%rsp) , %rax 
-    
+
     movq %rax, 104(%rdi)
     movq %rbx, 96(%rdi)
     movq %rcx, 88(%rdi)
@@ -12,7 +12,7 @@ co_swap:
     movq %rax, 72(%rdi)
 
     movq %rsi, 64(%rdi)
-    movq %rdi, 56(%rdi)
+    movq %rdi, 56(%rdi) 
     movq %rbp, 48(%rdi)
     movq %r8,  40(%rdi)
     movq %r9,  32(%rdi)
@@ -35,7 +35,9 @@ co_swap:
     movq 88(%rsi), %rcx
     movq 96(%rsi), %rbx
 
+    ;rsp内容可能会被覆盖掉,需要重新赋值
     leaq 8(%rsp), %rsp
     pushq 72(%rsi)
+
     movq 64(%rsi), %rsi
     ret

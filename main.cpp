@@ -10,7 +10,9 @@ void* cofun(void* arg)
     int a = *(int*)arg;
 
     cout << "cofun - 1:" << a << endl;
+    
     co_yield();
+
     cout << "cofun - 2:" << a << endl;
 }
 
@@ -24,14 +26,21 @@ int main()
     co_create(&co2,cofun,&b);
      cout << "co_create-co2" << endl;
 
-    co_resume(co1);
     cout << "co_resume co1 - 1" << endl;
-    co_resume(co2);
-    cout << "co_resume co2 - 1" << endl;
-
     co_resume(co1);
-    cout << "co_resume co1 - 2" << endl;
+    
+    cout << "co_resume co2 - 1" << endl;
     co_resume(co2);
+    
+    cout << "co_resume co1 - 2" << endl;
+    co_resume(co1);
+    
     cout << "co_resume co2 - 2" << endl;
+    co_resume(co2);
+    
+    
+    co_release(co1);
+    co_release(co2);
+    
     return 0;
 }
